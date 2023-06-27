@@ -1,0 +1,29 @@
+{
+  "name": "openmusic-app-back-end",
+  "version": "1.0.0",
+  "description": "Final Project for \"Belajar Fundamental Aplikasi Back-End\" class in Dicoding Indonesia.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/steven-fo/openmusic-app-back-end.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/steven-fo/openmusic-app-back-end/issues"
+  },
+  "homepage": "https://github.com/steven-fo/openmusic-app-back-end#readme",
+  "dependencies": {
+    "@hapi/hapi": "^21.3.2",
+    "dotenv": "^16.3.1",
+    "hapi": "^18.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.43.0",
+    "eslint-config-google": "^0.14.0"
+  }
+}
