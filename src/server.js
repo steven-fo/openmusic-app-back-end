@@ -4,8 +4,8 @@ const hapi = require('@hapi/hapi');
 
 const init = async () => {
   const server = hapi.server({
-    port: '',
-    host: '',
+    port: process.env.PORT,
+    host: process.env.HOST,
     routes: {
       cors: {
         origin: ['*'],
