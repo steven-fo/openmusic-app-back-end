@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const hapi = require('@hapi/hapi');
 
 const init = async () => {
