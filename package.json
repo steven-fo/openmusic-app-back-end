@@ -4,7 +4,7 @@
   "description": "Final Project for \"Belajar Fundamental Aplikasi Back-End\" class in Dicoding Indonesia.",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "migrate": "node-pg-migrate"
   },
@@ -23,7 +23,7 @@
     "dotenv": "^16.3.1",
     "hapi": "^18.1.0",
     "joi": "^17.9.2",
-    "nanoid": "^4.0.2",
+    "nanoid": "^3.3.6",
     "node-pg-migrate": "^6.2.2",
     "pg": "^8.11.1"
   },
