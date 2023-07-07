@@ -38,7 +38,6 @@ class AlbumsHandler {
         response.code(error.statusCode);
         return response;
       }
-
       const response = h.response({
         status: 'error',
         message: 'Maaf, terjadi kegagalan pada server kami.',
