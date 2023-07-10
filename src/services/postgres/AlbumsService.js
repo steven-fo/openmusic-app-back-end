@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable quotes */
 /* eslint-disable require-jsdoc */
 const {Pool} = require('pg');
@@ -69,6 +70,20 @@ class AlbumsService {
     if (!result.rows.length) {
       throw new NotFoundError('Album gagal dihapus. Id tidak ditemukan');
     }
+  }
+
+  async getSongByAlbumId(albumId) {
+    const query = {
+      text: "SELECT * FROM songs WHERE albumid = $1",
+      values: [albumId],
+    };
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new NotFoundError('Lagu dengan album id yang dicari tidak ditemukan.');
+    }
+
+    return result.rows;
   }
 }
 
