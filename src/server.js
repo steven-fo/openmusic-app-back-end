@@ -23,23 +23,6 @@ const init = async () => {
     },
   });
 
-  await server.register([
-    {
-      plugin: albums,
-      options: {
-        service: albumsService,
-        validator: AlbumsValidator,
-      },
-    },
-    {
-      plugin: songs,
-      options: {
-        service: songsService,
-        validator: SongsValidator,
-      },
-    },
-  ]);
-
   server.ext('onPreResponse', (request, h) => {
     const {response} = request;
 
@@ -66,6 +49,23 @@ const init = async () => {
     }
     return h.continue;
   });
+
+  await server.register([
+    {
+      plugin: albums,
+      options: {
+        service: albumsService,
+        validator: AlbumsValidator,
+      },
+    },
+    {
+      plugin: songs,
+      options: {
+        service: songsService,
+        validator: SongsValidator,
+      },
+    },
+  ]);
 
   await server.start();
   console.log(`Server berjalan pada ${server.info.uri}`);
