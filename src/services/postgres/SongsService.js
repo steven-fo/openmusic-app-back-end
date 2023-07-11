@@ -12,12 +12,12 @@ class SongsService {
     this._pool = new Pool();
   }
 
-  async addSong({title, year, genre, performer, duration, albumid}) {
+  async addSong({title, year, genre, performer, duration, albumId}) {
     const id = 'song-'+nanoid(16);
 
     const query = {
       text: "INSERT INTO songs VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id",
-      values: [id, title, year, performer, genre, duration, albumid],
+      values: [id, title, year, performer, genre, duration, albumId],
     };
 
     const result = await this._pool.query(query);
@@ -29,9 +29,37 @@ class SongsService {
     return result.rows[0].id;
   }
 
-  async getSongs() {
-    const result = await this._pool.query("SELECT id, title, performer FROM songs");
-    return result.rows.map(mapDBToModel);
+  async getSongs(title, performer) { // diambil dari https://www.dicoding.com/academies/271/discussions/230335
+    if (title && performer) {
+      const query = {
+        text: "SELECT id, title, performer FROM songs WHERE LOWER(title) LIKE $1 AND LOWER(performer) LIKE $2",
+        values: [`%${title}%`, `%${performer}%`],
+      };
+      const result = await this._pool.query(query);
+      return result.rows.map(mapDBToModel);
+    }
+    if (title !== undefined) {
+      const query = {
+        text: "SELECT id, title, performer FROM songs WHERE LOWER(title) LIKE $1",
+        values: [`%${title}%`],
+      };
+      const result = await this._pool.query(query);
+      return result.rows.map(mapDBToModel);
+    } else if (performer !== undefined) {
+      const query = {
+        text: "SELECT id, title, performer FROM songs WHERE LOWER(performer) LIKE $1",
+        values: [`%${performer}%`],
+      };
+      const result = await this._pool.query(query);
+      return result.rows.map(mapDBToModel);
+    } else {
+      const query = {
+        text: "SELECT id, title, performer FROM songs",
+        values: [],
+      };
+      const result = await this._pool.query(query);
+      return result.rows.map(mapDBToModel);
+    }
   }
 
   async getSongById(id) {
@@ -50,7 +78,7 @@ class SongsService {
 
   async editSongById(id, {title, year, genre, performer, duration, albumid}) {
     const query = {
-      text: "UPDATE songs SET title = $1, year = $2, performer = $3, genre = $4, duration = $5, albumid = $6 WHERE id = $7 RETURNING id",
+      text: 'UPDATE songs SET title = $1, year = $2, performer = $3, genre = $4, duration = $5, "albumId" = $6 WHERE id = $7 RETURNING id',
       values: [title, year, performer, genre, duration, albumid, id],
     };
     const result = await this._pool.query(query);
