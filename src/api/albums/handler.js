@@ -42,13 +42,24 @@ class AlbumsHandler {
     const {id} = request.params;
     const album = await this._service.getAlbumById(id);
     const songs = await this._service.getSongByAlbumId(id);
-    return {
-      status: 'success',
-      data: {
-        album,
-        songs,
-      },
-    };
+    if (!songs) {
+      return {
+        status: 'success',
+        data: {
+          album,
+        },
+      };
+    } else {
+      return {
+        status: 'success',
+        data: {
+          album: {
+            ...album,
+            songs,
+          },
+        },
+      };
+    }
   }
 
   async putAlbumByIdHandler(request, h) {

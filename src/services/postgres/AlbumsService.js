@@ -16,7 +16,7 @@ class AlbumsService {
     const id = 'album-'+nanoid(16);
 
     const query = {
-      text: "INSERT INTO albums VALUES($1, $2, $3) RETURNING id",
+      text: 'INSERT INTO albums VALUES($1, $2, $3) RETURNING id',
       values: [id, name, year],
     };
 
@@ -36,7 +36,7 @@ class AlbumsService {
 
   async getAlbumById(id) {
     const query = {
-      text: "SELECT * FROM albums WHERE id = $1",
+      text: 'SELECT * FROM albums WHERE id = $1',
       values: [id],
     };
     const result = await this._pool.query(query);
@@ -72,17 +72,12 @@ class AlbumsService {
     }
   }
 
-  async getSongByAlbumId(albumId) {
+  async getSongByAlbumId(id) {
     const query = {
-      text: "SELECT * FROM songs WHERE albumid = $1",
-      values: [albumId],
+      text: 'SELECT id, title, performer FROM songs WHERE "albumId" = $1',
+      values: [id],
     };
     const result = await this._pool.query(query);
-
-    if (!result.rows.length) {
-      throw new NotFoundError('Lagu dengan album id yang dicari tidak ditemukan.');
-    }
-
     return result.rows;
   }
 }
