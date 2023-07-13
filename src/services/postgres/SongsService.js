@@ -1,4 +1,3 @@
-/* eslint-disable quotes */
 /* eslint-disable max-len */
 /* eslint-disable require-jsdoc */
 const {Pool} = require('pg');
@@ -16,7 +15,7 @@ class SongsService {
     const id = 'song-'+nanoid(16);
 
     const query = {
-      text: "INSERT INTO songs VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id",
+      text: 'INSERT INTO songs VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id',
       values: [id, title, year, performer, genre, duration, albumId],
     };
 
@@ -32,7 +31,7 @@ class SongsService {
   async getSongs(title, performer) { // diambil dari https://www.dicoding.com/academies/271/discussions/230335
     if (title && performer) {
       const query = {
-        text: "SELECT id, title, performer FROM songs WHERE LOWER(title) LIKE $1 AND LOWER(performer) LIKE $2",
+        text: 'SELECT id, title, performer FROM songs WHERE LOWER(title) LIKE $1 AND LOWER(performer) LIKE $2',
         values: [`%${title}%`, `%${performer}%`],
       };
       const result = await this._pool.query(query);
@@ -40,31 +39,31 @@ class SongsService {
     }
     if (title !== undefined) {
       const query = {
-        text: "SELECT id, title, performer FROM songs WHERE LOWER(title) LIKE $1",
+        text: 'SELECT id, title, performer FROM songs WHERE LOWER(title) LIKE $1',
         values: [`%${title}%`],
       };
       const result = await this._pool.query(query);
       return result.rows.map(mapDBToModel);
     } else if (performer !== undefined) {
       const query = {
-        text: "SELECT id, title, performer FROM songs WHERE LOWER(performer) LIKE $1",
+        text: 'SELECT id, title, performer FROM songs WHERE LOWER(performer) LIKE $1',
         values: [`%${performer}%`],
       };
       const result = await this._pool.query(query);
       return result.rows.map(mapDBToModel);
     } else {
       const query = {
-        text: "SELECT id, title, performer FROM songs",
+        text: 'SELECT id, title, performer FROM songs',
         values: [],
       };
       const result = await this._pool.query(query);
-      return result.rows.map(mapDBToModel);
+      return result.rows;
     }
   }
 
   async getSongById(id) {
     const query = {
-      text: "SELECT * FROM songs WHERE id = $1",
+      text: 'SELECT * FROM songs WHERE id = $1',
       values: [id],
     };
     const result = await this._pool.query(query);
@@ -90,7 +89,7 @@ class SongsService {
 
   async deleteSongById(id) {
     const query = {
-      text: "DELETE FROM songs WHERE id = $1 RETURNING id",
+      text: 'DELETE FROM songs WHERE id = $1 RETURNING id',
       values: [id],
     };
     const result = await this._pool.query(query);
