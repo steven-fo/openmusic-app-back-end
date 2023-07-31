@@ -11,14 +11,12 @@ class UsersService {
     this._pool = new Pool();
   }
 
-  async addUser({username, password, fullanme}) {
-    await this.verifyNewUsername(username);
-
+  async addUser({username, password, fullname}) {
     const id = `user-${nanoid(16)}`;
     const hashedPassword = await bcrypt.hash(password, 10);
     const query = {
       text: 'INSERT INTO users VALUES($1, $2, $3, $4) RETURNING id',
-      values: [id, username, hashedPassword, fullanme],
+      values: [id, username, hashedPassword, fullname],
     };
 
     const result = await this._pool.query(query);
@@ -39,9 +37,7 @@ class UsersService {
     const result = await this._pool.query(query);
 
     if (result.rows.length > 0) {
-      throw new InvariantError(
-          'Gagal menambahkan user. Username sudah digunakan',
-      );
+      throw new InvariantError('Username sudah digunakan');
     }
   }
 

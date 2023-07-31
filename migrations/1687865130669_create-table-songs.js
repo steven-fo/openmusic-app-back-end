@@ -26,6 +26,16 @@ exports.up = (pgm) => {
     albumId: {
       type: 'VARCHAR(50)',
     },
+  }, {
+    constraints: {
+      foreignKeys: [
+        {
+          references: 'albums(id)',
+          columns: 'albumId',
+          onDelete: 'CASCADE',
+        },
+      ],
+    },
   });
 };
 

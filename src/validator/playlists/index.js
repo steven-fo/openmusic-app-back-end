@@ -4,7 +4,7 @@ const {
 const InvariantError = require('../../exceptions/InvariantError');
 
 const PlaylistsValidator = {
-  validatePlaylistPlayload: (payload) => {
+  validatePlaylistPayload: (payload) => {
     const validationResult = PlaylistPayloadSchema.validate(payload);
 
     if (validationResult.error) {

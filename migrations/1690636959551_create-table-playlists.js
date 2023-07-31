@@ -14,6 +14,16 @@ exports.up = (pgm) => {
       type: 'VARCHAR(50)',
       notNull: true,
     },
+  }, {
+    constraints: {
+      foreignKeys: [
+        {
+          references: 'users(id)',
+          columns: 'owner',
+          onDelete: 'CASCADE',
+        },
+      ],
+    },
   });
 };
 
