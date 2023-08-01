@@ -1,5 +1,6 @@
 /* eslint-disable require-jsdoc */
 const autoBind = require('auto-bind');
+const InvariantError = require('../../exceptions/InvariantError');
 
 class PlaylistsHandler {
   constructor(service, validator) {
@@ -53,23 +54,26 @@ class PlaylistsHandler {
     };
   }
 
-  async postSongToPlaylistHandler(request) {
+  async postSongToPlaylistHandler(request, h) {
     const {id: playlistId} = request.params;
-    const {songId} = request.paylaod;
+    const {songId} = request.payload;
     const {owner} = request.auth.credentials;
 
+    this._validator.validatePlaylistWithSongPayload(request.payload);
     await this._service.verifyPlaylistAccess(playlistId, owner);
     await this._service.addSongToPlaylist(playlistId, songId, owner);
 
-    return {
+    const response = h.response({
       status: 'success',
       message: 'Lagu berhasil ditambahkan',
-    };
+    });
+    response.code(201);
+    return response;
   }
 
   async getPlaylistWithSongsHandler(request) {
     const {id: playlistId} = request.params;
-    const {id: credentialId} = request.auth.credentials;
+    const {owner: credentialId} = request.auth.credentials;
 
     await this._service.verifyPlaylistAccess(playlistId, credentialId);
     const playlist = await this._service.getPlaylistById(playlistId);
@@ -80,7 +84,7 @@ class PlaylistsHandler {
       data: {
         playlist: {
           ...playlist,
-          songs,
+          songs: songs,
         },
       },
     };
@@ -89,8 +93,9 @@ class PlaylistsHandler {
   async deleteSongFromPlaylistHandler(request) {
     const {id: playlistId} = request.params;
     const {songId} = request.payload;
-    const {id: credentialId} = request.auth.credentials;
+    const {owner: credentialId} = request.auth.credentials;
 
+    this._validator.validatePlaylistWithSongPayload(request.payload);
     await this._service.verifyPlaylistAccess(playlistId, credentialId);
     await this._service.deleteSongFromPlaylist(
         playlistId, songId, credentialId,
@@ -104,7 +109,13 @@ class PlaylistsHandler {
 
   async getPlaylistActivitiesHandler(request) {
     const {id: playlistId} = request.params;
+    const {owner: credentialId} = request.auth.credentials;
 
+    if (!credentialId) {
+      throw new InvariantError('Wajib login terlebih dahulu');
+    }
+
+    await this._service.verifyPlaylistOwner(playlistId, credentialId);
     const activities = await this._service.getPlaylistActivities(playlistId);
 
     return {

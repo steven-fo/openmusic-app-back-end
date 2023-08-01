@@ -69,7 +69,7 @@ class PlaylistsService {
   }
 
   async addSongToPlaylist(playlistId, songId, credentialId) {
-    this.verifySongId(songId);
+    await this.verifySongId(songId);
 
     const activityId = `activity-${nanoid(16)}`;
     const action = 'add';
@@ -85,7 +85,7 @@ class PlaylistsService {
 
     const id = `playlist-songs-${nanoid(16)}`;
     const query = {
-      text: `INSERT INTO playlist-songs VALUES($1, $2, $3) RETURNING id`,
+      text: `INSERT INTO playlist_songs VALUES($1, $2, $3) RETURNING id`,
       values: [id, playlistId, songId],
     };
 
@@ -105,7 +105,12 @@ class PlaylistsService {
     };
 
     const result = await this._pool.query(query);
-    return result.rows;
+
+    if (!result.rows.length) {
+      throw new NotFoundError('Playlist tidak ditemukan');
+    }
+
+    return result.rows[0];
   }
 
   async getSongsByPlaylistId(playlistId) {
@@ -134,8 +139,8 @@ class PlaylistsService {
     await this._pool.query(activityQuery);
 
     const query = {
-      text: `DELETE playlist_songs.song_id FROM playlist_songs 
-      WHERE playlist_songs.playlist_id = $1 AND playlist_songs.song_id = $2
+      text: `DELETE FROM playlist_songs
+      WHERE playlist_id = $1 AND song_id = $2
       RETURNING id`,
       values: [playlistId, songId],
     };
@@ -155,13 +160,11 @@ class PlaylistsService {
 
     const result = await this._pool.query(query);
 
-    if (!result.rows.length) {
+    if (!result.rowCount) {
       throw new NotFoundError('Playlist tidak ditemukan');
     }
 
     const playlist = result.rows[0];
-    console.log(playlist.owner);
-    console.log(owner);
 
     if (playlist.owner !== owner) {
       throw new AuthorizationError('Anda tidak berhak mengakses resource ini');
@@ -179,12 +182,15 @@ class PlaylistsService {
       try {
         await this._collaborationService.verifyCollaborator(playlistId, userId);
       } catch (error) {
-        throw error;
+        throw new AuthorizationError(
+            'Anda tidak berhak mengakses resource ini');
       }
     }
   }
 
   async getPlaylistActivities(playlistId) {
+    await this.getPlaylistById(playlistId);
+
     const query = {
       text: `SELECT users.username, songs.title, action, time
       FROM playlist_song_activities
