@@ -22,7 +22,7 @@ exports.up = (pgm) => {
       type: 'TEXT',
     },
   }, {
-    constraint: {
+    constraints: {
       foreignKeys: [
         {
           references: 'playlists(id)',
