@@ -1,5 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable quotes */
 /* eslint-disable require-jsdoc */
 const {Pool} = require('pg');
 const {nanoid} = require('nanoid');
@@ -30,7 +28,7 @@ class AlbumsService {
   }
 
   async getAlbums() {
-    const result = await this._pool.query("SELECT * FROM albums");
+    const result = await this._pool.query('SELECT * FROM albums');
     return result.rows.map(mapDBToModel);
   }
 
@@ -50,7 +48,7 @@ class AlbumsService {
 
   async editAlbumById(id, {name, year}) {
     const query = {
-      text: "UPDATE albums SET name = $1, year = $2 WHERE id = $3 RETURNING id",
+      text: 'UPDATE albums SET name = $1, year = $2 WHERE id = $3 RETURNING id',
       values: [name, year, id],
     };
     const result = await this._pool.query(query);
@@ -62,7 +60,7 @@ class AlbumsService {
 
   async deleteAlbumById(id) {
     const query = {
-      text: "DELETE FROM albums WHERE id = $1 RETURNING id",
+      text: 'DELETE FROM albums WHERE id = $1 RETURNING id',
       values: [id],
     };
     const result = await this._pool.query(query);
