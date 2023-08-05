@@ -14,8 +14,8 @@ class AlbumsService {
     const id = 'album-'+nanoid(16);
 
     const query = {
-      text: 'INSERT INTO albums VALUES($1, $2, $3) RETURNING id',
-      values: [id, name, year],
+      text: 'INSERT INTO albums VALUES($1, $2, $3, $4) RETURNING id',
+      values: [id, name, year, null],
     };
 
     const result = await this._pool.query(query);
@@ -77,6 +77,20 @@ class AlbumsService {
     };
     const result = await this._pool.query(query);
     return result.rows;
+  }
+
+  async addCover(albumId, coverUrl) {
+    const query = {
+      text: `UPDATE albums SET cover = $1
+      WHERE albums.id = $2 RETURNING id`,
+      values: [coverUrl, albumId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new InvariantError('Cover gagal dimasukkan');
+    }
   }
 }
 

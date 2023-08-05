@@ -9,6 +9,8 @@ class AlbumsHandler {
     this.getAlbumByIdHandler = this.getAlbumByIdHandler.bind(this);
     this.putAlbumByIdHandler = this.putAlbumByIdHandler.bind(this);
     this.deleteAlbumByIdHandler = this.deleteAlbumByIdHandler.bind(this);
+
+    this.postAlbumCoverHandler = this.postAlbumCoverHandler.bind(this);
   }
 
   async postAlbumHandler(request, h) {
@@ -82,6 +84,27 @@ class AlbumsHandler {
       status: 'success',
       message: 'Album berhasil dihapus',
     };
+  }
+
+  async postAlbumCoverHandler(request, h) {
+    const {id} = request.params;
+    const {data} = request.payload;
+    this._validator.validateUploadPayload(data.hapi.headers);
+
+    const filename = await this._service.writeFile(data, data.hapi);
+    const fileLocation = `http://${process.env.HOST}:${process.env.PORT}/upload/images/${filename}`;
+
+    await this._service.addCover(id, fileLocation);
+
+    const response = h.response({
+      status: 'success',
+      message: 'Sampul berhasil diunggah',
+      data: {
+        fileLocation,
+      },
+    });
+    response.code(201);
+    return response;
   }
 }
 

@@ -1,28 +1,28 @@
 exports.shorthands = undefined;
 
 exports.up = (pgm) => {
-  pgm.createTable('playlist_songs', {
+  pgm.createTable('user_album_likes', {
     id: {
       type: 'VARCHAR(50)',
       primaryKey: true,
     },
-    playlist_id: {
+    user_id: {
       type: 'VARCHAR(50)',
     },
-    song_id: {
+    album_id: {
       type: 'VARCHAR(50)',
     },
   }, {
     constraints: {
       foreignKeys: [
         {
-          references: 'playlists(id)',
-          columns: 'playlist_id',
+          references: 'users(id)',
+          columns: 'user_id',
           onDelete: 'CASCADE',
         },
         {
-          references: 'songs(id)',
-          columns: 'song_id',
+          references: 'albums(id)',
+          columns: 'album_id',
           onDelete: 'CASCADE',
         },
       ],
@@ -31,5 +31,5 @@ exports.up = (pgm) => {
 };
 
 exports.down = (pgm) => {
-  pgm.dropTable('playlist_songs');
+  pgm.dropTable('user_album_likes');
 };
