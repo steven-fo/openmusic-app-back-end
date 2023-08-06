@@ -95,6 +95,16 @@ class AlbumsService {
   }
 
   async addLike(albumId, userId) {
+    const cekQuery = {
+      text: `SELECT * FROM albums WHERE id = $1`,
+      values: [albumId],
+    };
+
+    const cek = await this._pool.query(cekQuery);
+    if (!cek.rowCount) {
+      throw new NotFoundError('Album tidak ditemukan');
+    }
+
     const checkQuery = {
       text: `SELECT * FROM user_album_likes
       WHERE user_id = $1 AND album_id = $2`,

@@ -148,9 +148,8 @@ class AlbumsHandler {
     });
     if (flag) {
       response.header('X-Data-Source', 'cache');
-    } else {
-      return response;
     }
+    return response;
   }
 }
 
