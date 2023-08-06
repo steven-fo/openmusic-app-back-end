@@ -1,18 +1,13 @@
 /* eslint-disable require-jsdoc */
+const autoBind = require('auto-bind');
+
 class AlbumsHandler {
-  constructor(service, validator) {
+  constructor(service, storageService, validator) {
     this._service = service;
+    this._storageService = storageService;
     this._validator = validator;
 
-    this.postAlbumHandler = this.postAlbumHandler.bind(this);
-    this.getAlbumsHandler = this.getAlbumsHandler.bind(this);
-    this.getAlbumByIdHandler = this.getAlbumByIdHandler.bind(this);
-    this.putAlbumByIdHandler = this.putAlbumByIdHandler.bind(this);
-    this.deleteAlbumByIdHandler = this.deleteAlbumByIdHandler.bind(this);
-    this.postAlbumCoverHandler = this.postAlbumCoverHandler.bind(this);
-    this.postLikeAlbumHandler = this.postLikeAlbumHandler.bind(this);
-    this.deleteLikeAlbumHandler = this.deleteLikeAlbumHandler.bind(this);
-    this.getLikeAlbumHandler = this.getLikeAlbumHandler.bind(this);
+    autoBind(this);
   }
 
   async postAlbumHandler(request, h) {
@@ -93,7 +88,7 @@ class AlbumsHandler {
     const {data} = request.payload;
     this._validator.validateUploadPayload(data.hapi.headers);
 
-    const filename = await this._service.writeFile(data, data.hapi);
+    const filename = await this._storageService.writeFile(data, data.hapi);
     const fileLocation = `http://${process.env.HOST}:${process.env.PORT}/upload/images/${filename}`;
 
     await this._service.addCover(id, fileLocation);

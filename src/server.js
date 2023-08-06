@@ -2,6 +2,8 @@ require('dotenv').config();
 
 const hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
+const path = require('path');
+const config = require('./utils/config');
 
 const albums = require('./api/albums');
 const AlbumsService = require('./services/postgres/AlbumsService');
@@ -35,6 +37,8 @@ const _exports = require('./api/exports');
 const ProducerService = require('./services/rabbitmq/ProducerService');
 const ExportsValidator = require('./validator/exports');
 
+const StorageService = require('./services/storage/StorageService');
+
 const CacheService = require('./services/redis/CacheService');
 
 const init = async () => {
@@ -46,9 +50,11 @@ const init = async () => {
 
   const collaborationsService = new CollaborationsService();
   const playlistsService = new PlaylistsService(collaborationsService);
+  const storageService = new StorageService(
+      path.resolve(__dirname, 'api/albums/file/images'));
   const server = hapi.server({
-    port: process.env.PORT,
-    host: process.env.HOST,
+    port: config.app.port,
+    host: config.app.host,
     routes: {
       cors: {
         origin: ['*'],
@@ -90,12 +96,12 @@ const init = async () => {
   ]);
 
   server.auth.strategy('openmusicapp_jwt', 'jwt', {
-    keys: process.env.ACCESS_TOKEN_KEY,
+    keys: config.token.access,
     verify: {
       aud: false,
       iss: false,
       sub: false,
-      maxAgeSec: process.env.ACCESS_TOKEN_AGE,
+      maxAgeSec: config.token.age,
     },
     validate: (artifacts) => ({
       isValid: true,
@@ -110,6 +116,7 @@ const init = async () => {
       plugin: albums,
       options: {
         service: albumsService,
+        storageService: storageService,
         validator: AlbumsValidator,
       },
     },
