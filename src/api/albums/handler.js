@@ -9,8 +9,10 @@ class AlbumsHandler {
     this.getAlbumByIdHandler = this.getAlbumByIdHandler.bind(this);
     this.putAlbumByIdHandler = this.putAlbumByIdHandler.bind(this);
     this.deleteAlbumByIdHandler = this.deleteAlbumByIdHandler.bind(this);
-
     this.postAlbumCoverHandler = this.postAlbumCoverHandler.bind(this);
+    this.postLikeAlbumHandler = this.postLikeAlbumHandler.bind(this);
+    this.deleteLikeAlbumHandler = this.deleteLikeAlbumHandler.bind(this);
+    this.getLikeAlbumHandler = this.getLikeAlbumHandler.bind(this);
   }
 
   async postAlbumHandler(request, h) {
