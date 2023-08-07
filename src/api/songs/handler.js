@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 /* eslint-disable require-jsdoc */
 class SongsHandler {
   constructor(service, validator) {
@@ -16,7 +15,8 @@ class SongsHandler {
     this._validator.validateSongPayload(request.payload);
     const {title, year, genre, performer, duration, albumId} = request.payload;
 
-    const songId = await this._service.addSong({title, year, genre, performer, duration, albumId});
+    const songId = await this._service.addSong({
+      title, year, genre, performer, duration, albumId});
 
     const response = h.response({
       status: 'success',
