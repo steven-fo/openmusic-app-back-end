@@ -1,4 +1,6 @@
 /* eslint-disable require-jsdoc */
+const autoBind = require('auto-bind');
+
 class AuthenticationsHandler {
   constructor(authenticationsService, usersService, tokenManager, validator) {
     this._authenticationsService = authenticationsService;
@@ -6,10 +8,7 @@ class AuthenticationsHandler {
     this._tokenManager = tokenManager;
     this._validator = validator;
 
-    this.postAuthenticationHandler = this.postAuthenticationHandler.bind(this);
-    this.putAuthenticationHandler = this.putAuthenticationHandler.bind(this);
-    this.deleteAuthenticationHandler =
-    this.deleteAuthenticationHandler.bind(this);
+    autoBind(this);
   }
 
   async postAuthenticationHandler(request, h) {
