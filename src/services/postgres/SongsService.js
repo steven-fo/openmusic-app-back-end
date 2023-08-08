@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 /* eslint-disable require-jsdoc */
 const {Pool} = require('pg');
 const {nanoid} = require('nanoid');
@@ -31,7 +30,8 @@ class SongsService {
   async getSongs(title, performer) { // diambil dari https://www.dicoding.com/academies/271/discussions/230335
     if (title && performer) {
       const query = {
-        text: 'SELECT id, title, performer FROM songs WHERE LOWER(title) LIKE $1 AND LOWER(performer) LIKE $2',
+        text: `SELECT id, title, performer FROM songs WHERE LOWER(title)
+        LIKE $1 AND LOWER(performer) LIKE $2`,
         values: [`%${title}%`, `%${performer}%`],
       };
       const result = await this._pool.query(query);
@@ -39,14 +39,16 @@ class SongsService {
     }
     if (title !== undefined) {
       const query = {
-        text: 'SELECT id, title, performer FROM songs WHERE LOWER(title) LIKE $1',
+        text: `SELECT id, title, performer FROM songs
+        WHERE LOWER(title) LIKE $1`,
         values: [`%${title}%`],
       };
       const result = await this._pool.query(query);
       return result.rows.map(mapDBToModel);
     } else if (performer !== undefined) {
       const query = {
-        text: 'SELECT id, title, performer FROM songs WHERE LOWER(performer) LIKE $1',
+        text: `SELECT id, title, performer FROM songs
+        WHERE LOWER(performer) LIKE $1`,
         values: [`%${performer}%`],
       };
       const result = await this._pool.query(query);
@@ -77,7 +79,8 @@ class SongsService {
 
   async editSongById(id, {title, year, genre, performer, duration, albumid}) {
     const query = {
-      text: 'UPDATE songs SET title = $1, year = $2, performer = $3, genre = $4, duration = $5, "albumId" = $6 WHERE id = $7 RETURNING id',
+      text: `UPDATE songs SET title = $1, year = $2, performer = $3, genre = $4,
+      duration = $5, "albumId" = $6 WHERE id = $7 RETURNING id`,
       values: [title, year, performer, genre, duration, albumid, id],
     };
     const result = await this._pool.query(query);
