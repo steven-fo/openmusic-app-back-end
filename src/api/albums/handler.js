@@ -1,4 +1,5 @@
 /* eslint-disable require-jsdoc */
+const config = require('../../utils/config');
 const autoBind = require('auto-bind');
 
 class AlbumsHandler {
@@ -40,12 +41,17 @@ class AlbumsHandler {
   async getAlbumByIdHandler(request, h) {
     const {id} = request.params;
     const album = await this._service.getAlbumById(id);
+    const {id: albumId, name, year, cover} = album;
     const songs = await this._service.getSongByAlbumId(id);
     if (!songs) {
       return {
         status: 'success',
         data: {
-          album,
+          album: {
+            id: albumId,
+            name,
+            coverUrl: cover,
+          },
         },
       };
     } else {
@@ -53,7 +59,10 @@ class AlbumsHandler {
         status: 'success',
         data: {
           album: {
-            ...album,
+            id: albumId,
+            name,
+            year,
+            coverUrl: cover,
             songs,
           },
         },
@@ -85,11 +94,11 @@ class AlbumsHandler {
 
   async postAlbumCoverHandler(request, h) {
     const {id} = request.params;
-    const {data} = request.payload;
-    this._validator.validateUploadPayload(data.hapi.headers);
+    const {cover} = request.payload;
+    this._validator.validateUploadPayload(cover.hapi.headers);
 
-    const filename = await this._storageService.writeFile(data, data.hapi);
-    const fileLocation = `http://${process.env.HOST}:${process.env.PORT}/upload/images/${filename}`;
+    const filename = await this._storageService.writeFile(cover, cover.hapi);
+    const fileLocation = `http://${config.app.host}:${config.app.port}/upload/images/${filename}`;
 
     await this._service.addCover(id, fileLocation);
 
