@@ -56,6 +56,7 @@ const init = async () => {
   const server = hapi.server({
     port: config.app.port,
     host: config.app.host,
+    debug: {request: ['error']}, // func untuk display error pas error code 500
     routes: {
       cors: {
         origin: ['*'],
